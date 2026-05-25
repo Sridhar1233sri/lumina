@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lumina – Material Informatics Framework</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:       #0a1628;
+      --navy-mid:   #0f2044;
+      --blue-deep:  #163580;
+      --blue-accent:#2563eb;
+      --blue-light: #3b82f6;
+      --gold:       #c9a84c;
+      --gold-light: #e8c87a;
+      --cream:      #f5f1ea;
+      --cream-mid:  #ede8de;
+      --text-dark:  #1a1a2e;
+      --text-body:  #2d3748;
+      --text-muted: #5a6a7a;
+      --rule:       rgba(10,22,40,0.12);
+      --shadow-card:0 4px 28px rgba(10,22,40,0.10), 0 1px 6px rgba(10,22,40,0.06);
+      --placeholder-border: #f59e0b;
+      --placeholder-bg: #fffbeb;
+      --placeholder-text: #92400e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-body); line-height: 1.7; overflow-x: hidden; }
+
+    /* ── JUSTIFIED PARAGRAPHS ── */
+    p { text-align: justify; }
+    .prose { text-align: justify; max-width: 100% !important; }
+
+    /* HERO */
+    .hero {
+      background: var(--navy);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 60% -10%, rgba(37,99,235,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 10% 110%, rgba(201,168,76,0.12) 0%, transparent 55%),
+        linear-gradient(175deg, var(--navy) 0%, var(--navy-mid) 50%, #0c1e3c 100%);
+      color: #fff; padding: 0; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; padding: 80px 40px 72px; position: relative; z-index: 1; }
+    .hero h1 { font-family: 'EB Garamond', Georgia, serif; font-size: clamp(1.6rem, 3.2vw, 2.6rem); font-weight: 600; line-height: 1.22; color: #fff; max-width: 900px; margin-bottom: 28px; }
+    .hero h1 em { font-style: italic; color: var(--gold-light); }
+    .hero-authors { max-width: 860px; }
+    .author-line { font-size: 0.97rem; color: rgba(255,255,255,0.88); font-weight: 500; margin-bottom: 18px; line-height: 1.6; }
+    .author-line sup { font-size: 0.65em; color: var(--gold-light); }
+    .affil-list { border-top: 1px solid rgba(255,255,255,0.10); padding-top: 16px; display: flex; flex-direction: column; gap: 5px; }
+    .affil-list p { font-size: 0.82rem; color: rgba(255,255,255,0.55); line-height: 1.5; margin: 0; }
+    .affil-list p sup { font-size: 0.65em; color: var(--gold-light); }
+    .affil-list .contact-line { margin-top: 8px; color: rgba(255,255,255,0.65); }
+    .affil-list .contact-line a { color: var(--gold-light); text-decoration: none; }
+    .affil-list .contact-line a:hover { text-decoration: underline; }
+
+    /* NAV */
+    .topnav { background: rgba(10,22,40,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
+    .topnav-inner { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; gap: 6px; height: 52px; flex-wrap: wrap; }
+    .topnav a { color: rgba(255,255,255,0.60); text-decoration: none; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; padding: 6px 13px; border-radius: 4px; transition: color 0.18s, background 0.18s; }
+    .topnav a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .topnav-logo { margin-right: auto; color: #fff !important; font-family: 'EB Garamond', serif; font-size: 1.12rem !important; font-weight: 600 !important; background: none !important; }
+
+    /* ABSTRACT */
+    .abstract-band { background: var(--navy-mid); color: rgba(255,255,255,0.82); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .abstract-inner { max-width: 1100px; margin: 0 auto; padding: 48px 40px; display: grid; grid-template-columns: 180px 1fr; gap: 48px; align-items: start; }
+    .abstract-label { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); padding-top: 4px; }
+    .abstract-text { font-size: 0.97rem; line-height: 1.78; text-align: justify; }
+
+    /* ── AUTHOR SECTION ── */
+    .authors-section { background: #fff; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 72px 40px; }
+    .authors-inner { max-width: 1100px; margin: 0 auto; }
+    .authors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 28px; margin-top: 40px; }
+    .author-card {
+      background: var(--cream);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s;
+      box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+    }
+    .author-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+    .author-photo-wrap {
+      width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
+      background: linear-gradient(135deg, var(--navy-mid), var(--blue-deep));
+      display: flex; align-items: center; justify-content: center;
+    }
+    .author-photo-wrap img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+    }
+    .author-photo-placeholder {
+      width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    }
+    .author-photo-placeholder svg { width: 52px; height: 52px; color: rgba(255,255,255,0.35); }
+    .author-photo-placeholder span { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; }
+    .author-info { padding: 14px 16px 18px; }
+    .author-name { font-family: 'EB Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 2px; line-height: 1.3; }
+    .author-role { font-size: 0.75rem; font-weight: 600; color: var(--blue-accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+    .author-dept { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 8px; }
+    .author-affil-tag {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+      background: rgba(37,99,235,0.08); color: var(--blue-accent);
+      border: 1px solid rgba(37,99,235,0.22); border-radius: 3px; padding: 2px 7px; margin-bottom: 6px;
+    }
+    .author-links { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .author-links a {
+      font-size: 0.72rem; font-weight: 500; color: var(--text-muted);
+      border: 1px solid var(--rule); border-radius: 4px; padding: 3px 9px;
+      text-decoration: none; transition: color 0.16s, border-color 0.16s, background 0.16s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .author-links a:hover { color: var(--blue-accent); border-color: var(--blue-accent); background: rgba(37,99,235,0.05); }
+    .author-links a svg { width: 11px; height: 11px; fill: currentColor; }
+    .author-corresponding { border-left: 3px solid var(--gold); }
+    .corresponding-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+      background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 3px; padding: 2px 7px; margin-bottom: 6px;
+    }
+
+    /* MAIN */
+    .content-wrap { max-width: 1100px; margin: 0 auto; padding: 72px 40px; }
+    .section-head { display: grid; grid-template-columns: 56px 1fr; align-items: baseline; gap: 18px; margin-bottom: 36px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+    .section-num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--blue-accent); letter-spacing: 0.08em; font-weight: 500; padding-top: 2px; }
+    .section-title { font-family: 'EB Garamond', Georgia, serif; font-size: clamp(1.45rem, 2.5vw, 2rem); font-weight: 600; color: var(--navy); line-height: 1.2; }
+    .subsection { margin-bottom: 52px; }
+    .subsection-title { font-family: 'EB Garamond', Georgia, serif; font-size: 1.28rem; font-weight: 600; color: var(--text-dark); margin-bottom: 14px; padding-left: 16px; border-left: 3px solid var(--gold); }
+    p { margin-bottom: 1em; }
+    p:last-child { margin-bottom: 0; }
+    .prose { font-size: 0.97rem; line-height: 1.82; color: var(--text-body); }
+
+    /* ── UNIFIED FIGURE CARD & IMAGE SIZING ── */
+    .figure-card { background: #fff; border: 1px solid var(--rule); border-radius: 6px; box-shadow: var(--shadow-card); overflow: hidden; margin: 36px 0; transition: box-shadow 0.25s; }
+    .figure-card:hover { box-shadow: 0 8px 40px rgba(10,22,40,0.15); }
+    .figure-img-wrap {
+      background: var(--cream-mid);
+      display: flex; justify-content: center; align-items: center;
+      padding: 28px 28px 0;
+      border-bottom: 1px solid var(--rule);
+      min-height: 240px;
+    }
+    /* All images unified: horizontal default max 85% width, fixed max-height */
+    .figure-img-wrap img {
+      max-width: 85%; width: auto; height: auto;
+      max-height: 440px; object-fit: contain;
+      border-radius: 4px; box-shadow: 0 2px 18px rgba(10,22,40,0.12); display: block;
+    }
+    /* Vertical images (Material Browser, AI Chatbot) — narrower max-width */
+    .figure-img-wrap img.img-vertical {
+      max-width: 38%; max-height: 520px;
+    }
+    /* Wide full-bleed images */
+    .figure-img-wrap img.img-wide {
+      max-width: 92%; max-height: 480px;
+    }
+    /* Small/dialog screenshots */
+    .figure-img-wrap img.img-sm {
+      max-width: 42%; max-height: 480px;
+    }
+    .figure-caption { padding: 14px 22px 16px; display: flex; align-items: baseline; gap: 10px; }
+    .figure-caption-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 500; color: var(--blue-accent); white-space: nowrap; }
+    .figure-caption-text { font-size: 0.88rem; color: var(--text-muted); font-style: italic; line-height: 1.5; text-align: justify; }
+
+    /* PLACEHOLDERS */
+    .upload-placeholder { width: 100%; min-height: 280px; background: var(--placeholder-bg); border: 2.5px dashed var(--placeholder-border); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 28px; }
+    .upload-placeholder .up-icon { width: 52px; height: 52px; background: rgba(245,158,11,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .upload-placeholder .up-icon svg { width: 26px; height: 26px; color: var(--placeholder-border); }
+    .upload-placeholder .up-title { font-weight: 600; font-size: 0.95rem; color: var(--placeholder-text); }
+    .upload-placeholder .up-hint { font-size: 0.82rem; color: #b45309; text-align: center; line-height: 1.5; max-width: 340px; }
+    .upload-placeholder .up-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; background: rgba(245,158,11,0.18); color: #92400e; padding: 3px 10px; border-radius: 3px; border: 1px solid rgba(245,158,11,0.40); }
+
+    /* FEATURE GRID */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 32px 0; }
+    .feature-card { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 22px 20px 20px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }
+    .feature-card::before { content: attr(data-num); position: absolute; top: 16px; right: 18px; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--blue-accent); opacity: 0.08; line-height: 1; }
+    .feature-icon { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--blue-deep), var(--blue-accent)); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .feature-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-card h4 { font-size: 0.94rem; font-weight: 600; color: var(--navy); margin-bottom: 7px; }
+    .feature-card p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; margin: 0; text-align: justify; }
+
+    /* TABLE */
+    .data-table-wrap { margin: 24px 0; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead tr { background: var(--navy); color: #fff; }
+    thead th { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; padding: 12px 18px; text-align: left; }
+    tbody tr { border-bottom: 1px solid var(--rule); }
+    tbody tr:nth-child(even) { background: rgba(10,22,40,0.025); }
+    tbody td { padding: 11px 18px; color: var(--text-body); }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 500; }
+    .badge-original { background: #e0f2e9; color: #2d6a4f; }
+    .badge-override  { background: #fff3cd; color: #856404; }
+    .badge-active    { background: #dbeafe; color: #1e40af; }
+
+    /* DIVIDER */
+    .section-divider { border: none; border-top: 1px solid var(--rule); margin: 64px 0; }
+
+    /* ANNOTATION */
+    .annotation-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0 32px; }
+    .annotation-item { display: flex; align-items: flex-start; gap: 10px; background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; }
+    .annotation-num { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: var(--navy); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+    .annotation-text { font-size: 0.84rem; color: var(--text-body); line-height: 1.5; text-align: justify; }
+    .annotation-text strong { color: var(--navy); display: block; font-size: 0.85rem; margin-bottom: 2px; }
+
+    /* VIZ BAND */
+    .viz-band { background: linear-gradient(to bottom, #f0f4ff, var(--cream)); border-top: 1px solid rgba(37,99,235,0.12); border-bottom: 1px solid rgba(37,99,235,0.12); padding: 72px 40px; }
+    .viz-inner { max-width: 1100px; margin: 0 auto; }
+    .viz-sub-heading { font-family: 'EB Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: var(--navy); margin: 44px 0 16px; padding-bottom: 10px; border-bottom: 2px solid rgba(37,99,235,0.18); display: flex; align-items: center; gap: 10px; }
+    .viz-sub-heading .viz-icon { width: 30px; height: 30px; border-radius: 6px; background: linear-gradient(135deg, var(--blue-deep), var(--blue-accent)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .viz-sub-heading .viz-icon svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2; }
+
+    /* EOS subsection styling */
+    .eos-model-block { background: #fff; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 32px 0; box-shadow: var(--shadow-card); }
+    .eos-model-header { background: linear-gradient(135deg, var(--navy), var(--blue-deep)); padding: 18px 24px; display: flex; align-items: center; gap: 14px; }
+    .eos-model-header h4 { font-family: 'EB Garamond', Georgia, serif; font-size: 1.18rem; font-weight: 600; color: #fff; margin: 0; }
+    .eos-model-header .eos-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; background: rgba(201,168,76,0.25); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4); border-radius: 3px; padding: 2px 8px; white-space: nowrap; }
+    .eos-model-body { padding: 24px; }
+    .eos-fig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; align-items: stretch; }
+    .eos-fig-row .figure-card { margin: 0; display: flex; flex-direction: column; }
+    .eos-fig-row .figure-card .figure-img-wrap { flex: 1; }
+    .eos-fig-row .figure-card .figure-img-wrap img { width: 100%; max-width: 100%; height: 100%; object-fit: contain; max-height: 340px; }
+    .eos-fig-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 20px 0; }
+    .eos-fig-row-3 .figure-card { margin: 0; }
+
+    /* EXPORT BAND */
+    .export-band { background: var(--cream-mid); border-top: 1px solid var(--rule); padding: 72px 40px; }
+    .export-inner { max-width: 1100px; margin: 0 auto; }
+    .export-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin: 28px 0; }
+    .export-feature-item { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 18px 16px; display: flex; align-items: flex-start; gap: 12px; }
+    .export-feature-item .ef-icon { width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0; background: linear-gradient(135deg, #0f4c81, #1d6fa4); display: flex; align-items: center; justify-content: center; }
+    .export-feature-item .ef-icon svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; }
+    .export-feature-item h5 { font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .export-feature-item p { font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.5; text-align: justify; }
+
+    /* VIDEO */
+    .video-section { background: var(--navy); color: #fff; padding: 72px 40px; }
+    .video-inner { max-width: 1100px; margin: 0 auto; }
+    .video-wrap { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); max-width: 860px; margin: 28px auto 0; }
+    .video-wrap video { display: block; width: 100%; max-height: 540px; object-fit: contain; background: #000; }
+    .video-desc { max-width: 700px; margin-top: 24px; font-size: 0.92rem; color: rgba(255,255,255,0.58); line-height: 1.7; text-align: justify; }
+    .video-notice { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.30); border-radius: 6px; padding: 14px 20px; margin-top: 16px; font-size: 0.85rem; color: var(--gold-light); line-height: 1.6; max-width: 860px; margin-left: auto; margin-right: auto; }
+    .video-notice strong { color: #fff; }
+
+    /* FOOTER */
+    footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.07); padding: 32px 40px; color: rgba(255,255,255,0.40); font-size: 0.82rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+
+    /* KEYWORDS */
+    .keyword-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .keyword { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; padding: 4px 12px; border: 1px solid rgba(37,99,235,0.30); color: var(--blue-accent); border-radius: 3px; background: rgba(37,99,235,0.04); }
+
+    /* INFO BOX */
+    .info-box { background: rgba(37,99,235,0.05); border: 1px solid rgba(37,99,235,0.18); border-left: 4px solid var(--blue-accent); border-radius: 4px; padding: 16px 20px; margin: 20px 0; font-size: 0.92rem; color: var(--text-body); text-align: justify; }
+
+    /* CATEGORIES BOX */
+    .category-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+    .cat-chip { font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; padding: 4px 12px; border-radius: 3px; border: 1px solid rgba(22,53,128,0.28); color: var(--blue-deep); background: rgba(22,53,128,0.06); font-weight: 500; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .eos-fig-row { grid-template-columns: 1fr; }
+      .eos-fig-row-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .hero-inner { padding: 56px 22px 52px; }
+      .content-wrap { padding: 48px 22px; }
+      .abstract-inner { grid-template-columns: 1fr; gap: 12px; padding: 36px 22px; }
+      .topnav-inner { padding: 0 22px; }
+      .topnav a:not(.topnav-logo) { display: none; }
+      .section-head { grid-template-columns: 1fr; gap: 4px; }
+      .video-section, .viz-band, .export-band { padding: 48px 22px; }
+      footer { padding: 24px 22px; }
+      .annotation-list { grid-template-columns: 1fr; }
+      .authors-section { padding: 48px 22px; }
+      .figure-img-wrap img { max-width: 96%; }
+      .figure-img-wrap img.img-vertical { max-width: 60%; }
+      .figure-img-wrap img.img-sm { max-width: 70%; }
+    }
+
+    /* ANIMATIONS */
+    .fade-up { opacity: 0; transform: translateY(22px); animation: fadeUp 0.7s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.15s; }
+    .fade-up:nth-child(3) { animation-delay: 0.25s; }
+    .reveal { opacity: 1; transform: none; transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="fade-up">
+      <em>Lumina:</em> An AI-Augmented Multiscale Material Informatics Framework for Extreme Aero-Chemo-Thermo-Mechanical Regimes
+    </h1>
+    <div class="hero-authors fade-up">
+      <p class="author-line">
+        Pradeep Kumar Seshadri<sup>#*</sup>, Vigneshwaran N<sup>$</sup>, Sudaroli Dhananjeyan<sup>!</sup>, S. Karthikeyan<sup>^</sup>, Navbila K<sup>$</sup>, Sridhar S<sup>$</sup>, Subhadevi K<sup>$</sup>, Hari Sree Charan H<sup>^</sup>, A Abdul Azeez<sup>^</sup>, Jeswin Mickle<sup>!</sup>, Harsha C<sup>!</sup>
+      </p>
+      <div class="affil-list">
+        <p><sup>#</sup> Department of Aerospace Engineering, IIT Madras, Chennai &ndash; 600036, India</p>
+        <p><sup>$</sup> Artificial Intelligence and Data Science, Kongu Engineering College, Perundurai, Erode, Tamil Nadu, India</p>
+        <p><sup>^</sup> Department of Aerospace Engineering, B.S. Abdur Rahman Crescent Institute of Science &amp; Technology, Chennai &ndash; 600048, India</p>
+        <p><sup>!</sup> Computer Science and Engineering Department, T John Institute of Technology, Bangalore &ndash; 560068, India</p>
+        <p class="contact-line">
+  <sup>*</sup> Corresponding Author: 
+  <a href="mailto:pkseshadri@smail.iitm.ac.in">
+    pkseshadri@smail.iitm.ac.in
+  </a>
+</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="topnav-logo" href="#top">Lumina</a>
+    <a href="#abstract">Abstract</a>
+    <a href="#authors">Authors</a>
+    <a href="#system">System</a>
+    <a href="#components">Components</a>
+    <a href="#datastate">Data Management</a>
+    <a href="#visualization">Visualization</a>
+    <a href="#export">Export</a>
+    <a href="#chatbot">AI Chatbot</a>
+    <a href="#demo">Demo</a>
+  </div>
+</nav>
+
+<!-- ABSTRACT -->
+<section class="abstract-band" id="abstract">
+  <div class="abstract-inner">
+    <div class="abstract-label">Abstract</div>
+    <div class="abstract-text">
+      Predictive simulations and experimental design involving extreme aero-chemothermo-mechanical regimes
+      require high-fidelity material representation across diverse physical states. However, data for metals,
+      polymers, and propellants, explosives, and pyrotechnics (PEP) remain fragmented, obstructing
+      traceability for formulators, experimentalists, and simulation engineers. This work introduces
+      <strong style="color:#fff;">Lumina</strong>, a modular Python-based informatics framework that centralizes multiscale
+      material data &mdash; from atomistic simulation datasets to macro-scale experimental records &mdash; within a
+      unified repository. Lumina employs a hierarchical XML-based schema and a dynamic runtime parsing
+      mechanism to enable schema-independent parameter extraction. The platform integrates a conversational
+      AI assistant for intelligent material retrieval and natural language querying, establishing a scalable
+      foundation for data-driven discovery in advanced defence and aerospace engineering.
+      <div class="keyword-list" style="margin-top:18px;">
+        <span class="keyword" style="border-color:rgba(201,168,76,0.4);color:var(--gold-light);background:rgba(201,168,76,0.07);">Material Database Architecture</span>
+        <span class="keyword" style="border-color:rgba(201,168,76,0.4);color:var(--gold-light);background:rgba(201,168,76,0.07);">Runtime Material Parsing</span>
+        <span class="keyword" style="border-color:rgba(201,168,76,0.4);color:var(--gold-light);background:rgba(201,168,76,0.07);">Constitutive Model Visualisation</span>
+        <span class="keyword" style="border-color:rgba(201,168,76,0.4);color:var(--gold-light);background:rgba(201,168,76,0.07);">AI-Assisted Material Retrieval</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     AUTHORS SECTION
+══════════════════════════════════════════════════ -->
+<section class="authors-section" id="authors">
+  <div class="authors-inner">
+    <div class="section-head reveal">
+      <span class="section-num">§ 0</span>
+      <h2 class="section-title">Authors</h2>
+    </div>
+    <p class="prose reveal">
+      The Lumina framework is the result of an interdisciplinary collaboration spanning aerospace engineering, artificial intelligence, and computer science, bringing together researchers from IIT Madras, Kongu Engineering College, B.S. Abdur Rahman Crescent Institute of Science &amp; Technology, and T John Institute of Technology.
+    </p>
+    <div class="authors-grid reveal">
+
+      <!-- Author 1 — Corresponding -->
+      <div class="author-card author-corresponding">
+        <div class="author-photo-wrap">
+          <img src="Pradeep_Kumar_Seshadri.jpg" alt="Pradeep Kumar Seshadri"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="corresponding-badge">★ Corresponding Author</div>
+          <div class="author-name">Pradeep Kumar Seshadri</div>
+          <div class="author-role">Principal Investigator</div>
+          <p class="designation">Assistant Professor</p>
+          <div class="author-dept">Department of Aerospace Engineering, IIT Madras, Chennai – 600036</div>
+          <span class="author-affil-tag">IIT Madras</span>
+          <div class="author-links">
+            <a href="mailto:pkseshadri@smail.iitm.ac.in" title="Email">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email
+            </a>
+            <a href="https://www.linkedin.com/in/pkseshadri/" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 2 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Vigneshwaran_N.jpg" alt="Vigneshwaran N"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Vigneshwaran N</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Assistant Professor</p>
+          <div class="author-dept">Artificial Intelligence &amp; Data Science, Kongu Engineering College, Erode, Tamil Nadu</div>
+          <span class="author-affil-tag">Kongu Engg. College</span>
+          <div class="author-links">
+            <a href="mailto:vignesh.1088@gmail.com" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="https://www.linkedin.com/in/vignesh-n-40142017" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 3 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Static_Website/Sudar.jpeg" alt="Sudaroli Dhananjeyan"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Sudaroli Dhananjeyan</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Associate Professor</p>
+          <div class="author-dept">Computer Science &amp; Engineering, T John Institute of Technology, Bangalore – 560068</div>
+          <span class="author-affil-tag">T John Institute</span>
+          <div class="author-links">
+            <a href="mailto:#" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="#" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 4 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Static_Website/Prof.Karthikeyan.jpeg" alt="S. Karthikeyan"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">S. Karthikeyan</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Assistant Professor</p>
+          <div class="author-dept">Department of Aerospace Engineering, B.S. Abdur Rahman Crescent Institute of Science &amp; Technology, Chennai – 600048</div>
+          <span class="author-affil-tag">BSACIST</span>
+          <div class="author-links">
+            <a href="mailto:#" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="#" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 5 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Navbila_K.jpg" alt="Navbila K"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Navbila K</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Artificial Intelligence &amp; Data Science, Kongu Engineering College, Erode, Tamil Nadu</div>
+          <span class="author-affil-tag">Kongu Engg. College</span>
+          <div class="author-links">
+  <a href="mailto:navbilak@gmail.com" title="Email">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Email
+  </a>
+
+  <a href="https://www.linkedin.com/in/navbila-k-464573259/" target="_blank" title="LinkedIn">
+    LinkedIn
+  </a>
+</div>
+        </div>
+      </div>
+
+      <!-- Author 6 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Sridhar_S.jpg" alt="Sridhar S"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Sridhar S</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Artificial Intelligence &amp; Data Science, Kongu Engineering College, Erode, Tamil Nadu</div>
+          <span class="author-affil-tag">Kongu Engg. College</span>
+         <div class="author-links">
+  <a href="mailto:sridharsri102004@gmail.com" title="Email">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Email
+  </a>
+
+  <a href="https://www.linkedin.com/in/sridhar-s-044395259" target="_blank" title="LinkedIn">
+    LinkedIn
+  </a>
+</div>
+        </div>
+      </div>
+
+      <!-- Author 7 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Subhadevi_K.jpg" alt="Subhadevi K"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Subhadevi K</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Artificial Intelligence &amp; Data Science, Kongu Engineering College, Erode, Tamil Nadu</div>
+          <span class="author-affil-tag">Kongu Engg. College</span>
+         <div class="author-links">
+  <a href="mailto:subhadevi333@gmail.com" title="Email">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Email
+  </a>
+
+  <a href="https://www.linkedin.com/in/subhadevi-krishnaraj" target="_blank" title="LinkedIn">
+    LinkedIn
+  </a>
+</div>
+        </div>
+      </div>
+
+      <!-- Author 8 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Hari_Sree_Charan_H.jpg" alt="Hari Sree Charan H"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Hari Sree Charan H</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Department of Aerospace Engineering, B.S. Abdur Rahman Crescent Institute of Science &amp; Technology, Chennai – 600048</div>
+          <span class="author-affil-tag">BSACIST</span>
+          <div class="author-links">
+            <a href="mailto:harisreecharan61004@gmail.com" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="https://www.linkedin.com/in/hari-sree-charan-437b14330" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 9 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="A_Abdul_Azeez.jpg" alt="A Abdul Azeez"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">A Abdul Azeez</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Department of Aerospace Engineering, B.S. Abdur Rahman Crescent Institute of Science &amp; Technology, Chennai – 600048</div>
+          <span class="author-affil-tag">BSACIST</span>
+         <div class="author-links">
+  <a href="mailto:azeezabu187@gmail.com" title="Email">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Email
+  </a>
+
+  <a href="https://www.linkedin.com/in/abdul-azeez-7631a22b4/" 
+     target="_blank" 
+     rel="noopener noreferrer" 
+     title="LinkedIn">
+    LinkedIn
+  </a>
+</div>
+        </div>
+      </div>
+
+      <!-- Author 10 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Static_Website/Jeswin.jpeg" alt="Jeswin Mickle"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Jeswin Mickle</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Computer Science &amp; Engineering, T John Institute of Technology, Bangalore – 560068</div>
+          <span class="author-affil-tag">T John Institute</span>
+          <div class="author-links">
+            <a href="mailto:#" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="#" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author 11 -->
+      <div class="author-card">
+        <div class="author-photo-wrap">
+          <img src="Static_Website/harsha.jpeg" alt="Harsha C"
+            onerror="this.outerHTML='<div class=\'author-photo-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\'><path d=\'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg><span>PHOTO PLACEHOLDER</span></div>'" />
+        </div>
+        <div class="author-info">
+          <div class="author-name">Harsha C</div>
+          <div class="author-role">Research Contributor</div>
+          <p class="designation">Student</p>
+          <div class="author-dept">Computer Science &amp; Engineering, T John Institute of Technology, Bangalore – 560068</div>
+          <span class="author-affil-tag">T John Institute</span>
+          <div class="author-links">
+            <a href="mailto:#" title="Email"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>
+            <a href="#" title="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /authors-grid -->
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="content-wrap" id="system">
+
+  <!-- § 1 SYSTEM OVERVIEW -->
+  <div class="section-head reveal">
+    <span class="section-num">§ 1</span>
+    <h2 class="section-title">GUI-Driven Material Data Visualisation System</h2>
+  </div>
+  <p class="prose reveal">
+    The Lumina graphical user interface provides a unified environment for managing thermophysical
+    material data by integrating XML-based data structures, a PostgreSQL relational database,
+    AI-assisted querying, and Matplotlib-based visualisation tools. The interface enables users to
+    seamlessly navigate, analyse, and manipulate material datasets within a single operational context,
+    substantially reducing workflow complexity and improving experimental reproducibility.
+  </p>
+  <p class="prose reveal" style="margin-top:12px;">
+    The System Main Window acts as the central hub where all major functionalities are interconnected,
+    allowing practitioners to move from material selection through property analysis and design-of-experiments
+    without switching application contexts. The architecture comprises eight primary interface regions,
+    each fulfilling a distinct analytical responsibility.
+  </p>
+
+  <div class="figure-card reveal">
+    <div class="figure-img-wrap">
+      <img class="img-wide" src="System_Main_Window.png" alt="Lumina System Main Window"
+        onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>System Main Window Screenshot</div><div class=\'up-hint\'>Place <strong>System_Main_Window.png</strong> in the same folder as index.html.</div><span class=\'up-tag\'>Fig. 6</span></div>'"
+      />
+    </div>
+    <div class="figure-caption">
+      <span class="figure-caption-label">Fig. 6</span>
+      <span class="figure-caption-text">System Main Window &mdash; The central hub of the Lumina framework, showing all eight primary interface regions: (1) Material Browser, (2) Property Viewer, (3) Data State Management Tabs, (4) Override Management, (5) Visualizations, (6) Add New Materials, (7) Export System, and (8) AI Chatbot.</span>
+    </div>
+  </div>
+
+  <hr class="section-divider" id="components" />
+
+  <!-- § 2 INTERFACE COMPONENTS -->
+  <div class="section-head reveal">
+    <span class="section-num">§ 2</span>
+    <h2 class="section-title">Primary Interface Components</h2>
+  </div>
+
+  <div class="feature-grid reveal">
+    <div class="feature-card" data-num="1">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg></div>
+      <h4>Material Browser</h4>
+      <p>A structured, categorised listing of all 79 materials. Single-click selection triggers immediate population of the Property Viewer across metals, polymers, energetics, and composites.</p>
+    </div>
+    <div class="feature-card" data-num="2">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+      <h4>Property Viewer</h4>
+      <p>Displays the full thermophysical parameter set &mdash; density, thermal capacity, mechanical constants, EOS coefficients &mdash; with units and traceable literature references.</p>
+    </div>
+    <div class="feature-card" data-num="3">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18M3 14h18M10 4v16"/></svg></div>
+      <h4>Data State Management</h4>
+      <p>Four tab-based views &mdash; <em>Original Data</em>, <em>Overrides</em>, <em>Active View</em>, and <em>References</em> &mdash; for structured switching between baseline and modified data.</p>
+    </div>
+    <div class="feature-card" data-num="4">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      <h4>Override Management</h4>
+      <p>Form-based interface to temporarily modify any parameter &mdash; specifying path, value, unit, and justification &mdash; for sandbox experimentation without altering validated baselines.</p>
+    </div>
+    <div class="feature-card" data-num="5">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h4>Visualizations &mdash; Unified Viz</h4>
+      <p>Integrated visualization suite comprising three modules: <em>Material Property Comparisons</em>, <em>EOS Visualization</em>, and <em>Experimental Data Visualization</em> for Hugoniot and shock data analysis.</p>
+    </div>
+    <div class="feature-card" data-num="6">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+      <h4>Add New Materials</h4>
+      <p>Provides a structured input workflow for ingesting new material entries directly into the PostgreSQL database, with schema validation and unit standardisation built-in.</p>
+    </div>
+    <div class="feature-card" data-num="7">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <h4>Export System</h4>
+      <p>Advanced selective export interface allowing users to choose specific materials, individual properties, and model types before generating a simulation-ready XML output file.</p>
+    </div>
+    <div class="feature-card" data-num="8">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <h4>AI Chatbot</h4>
+      <p>A locally deployed Llama 2 chatbot (via Ollama) that converts natural language queries into optimised SQL, returning structured material data without requiring any SQL expertise.</p>
+    </div>
+  </div>
+
+  <!-- 2.1 Material Browser -->
+  <div class="subsection reveal">
+    <h3 class="subsection-title">2.1 &nbsp;Material Browser</h3>
+    <p class="prose">
+      The Material Browser occupies the left panel of the main window and provides a structured,
+      hierarchically organised listing of all materials currently stored in the PostgreSQL database.
+      Users may search by name or keyword and select any entry with a single click, triggering
+      immediate population of the Property Viewer. The browser maintains a live count of available
+      records (e.g., &ldquo;Total: 79 materials&rdquo;) and supports future extension to category-level filtering
+      across material classes &mdash; metallic alloys, polymers, explosives, and propellant compositions.
+    </p>
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <img class="img-vertical" src="Material_Browser.png" alt="Lumina Material Browser panel"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Material Browser Screenshot</div><div class=\'up-hint\'>Add <strong>Material_Browser.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 2.1</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 2.1</span>
+        <span class="figure-caption-text">Material Browser &mdash; Left-panel listing of all available materials with search and single-click selection.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 Property Viewer -->
+  <div class="subsection reveal">
+    <h3 class="subsection-title">2.2 &nbsp;Property Viewer</h3>
+    <p class="prose">
+      The Property Viewer occupies the central-upper panel and presents the full thermophysical
+      parameter set of the selected material in a tabular format, with columns for property path,
+      value, measurement unit, and literature reference identifier. Parameters are hierarchically
+      named following the XML schema convention (e.g.,
+      <code style="font-family:'JetBrains Mono',monospace;font-size:0.85em;background:#eef2fb;padding:1px 5px;border-radius:3px;">properties.Thermal.Cp</code>),
+      ensuring unambiguous traceability from GUI display to the underlying data file.
+      An &ldquo;Export Original Data as XML&rdquo; button enables simulation-ready data extraction directly from this view.
+    </p>
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <img src="Property_Viewer.png" alt="Lumina Property Viewer panel"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Property Viewer Screenshot</div><div class=\'up-hint\'>Add <strong>Property_Viewer.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 2.2</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 2.2</span>
+        <span class="figure-caption-text">Property Viewer &mdash; Tabular display of all thermophysical parameters with units, values, and traceable references for the selected material.</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" id="datastate" />
+
+  <!-- § 3 DATA STATE MANAGEMENT -->
+  <div class="section-head reveal">
+    <span class="section-num">§ 3</span>
+    <h2 class="section-title">Data State Management</h2>
+  </div>
+  <p class="prose reveal">
+    A central architectural innovation of Lumina is its three-layer data management mechanism,
+    designed to support iterative Design of Experiments (DoE) and model calibration workflows
+    without compromising the integrity of validated source data. Each layer fulfils a distinct
+    role within the analytical pipeline:
+  </p>
+  <div class="data-table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Tab Label</th><th>Description</th><th>Data Integrity</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-original">Original</span></td>
+          <td>Original Data</td>
+          <td>Immutable baseline derived from validated literature sources and experimental records.</td>
+          <td>Read-only; never modified by user actions.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-override">Override</span></td>
+          <td>Overrides</td>
+          <td>User-specified parameter modifications introduced during the active session.</td>
+          <td>Tracked separately; reversible at any time.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>Active View</td>
+          <td>Merged dataset combining original values with all applied overrides.</td>
+          <td>Computation- and simulation-ready; exportable as XML.</td>
+        </tr>
+        <tr>
+          <td><span class="badge" style="background:#f3e8ff;color:#6b21a8;">References</span></td>
+          <td>References</td>
+          <td>Traceability records linking each parameter to its source literature or experiment.</td>
+          <td>Linked to original layer; supports audit and reproducibility.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Data State Management image -->
+  <div class="figure-card reveal" style="margin-top:32px;">
+    <div class="figure-img-wrap">
+      <img class="img-wide" src="Data State Management Tabs.png" alt="Data State Management Tabs"
+        onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Data State Management Tabs Screenshot</div><div class=\'up-hint\'>Add <strong>Data State Management Tabs.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 3.0</span></div>'"
+      />
+    </div>
+    <div class="figure-caption">
+      <span class="figure-caption-label">Fig. 3.0</span>
+      <span class="figure-caption-text">Data State Management Tabs &mdash; Overview of the four-tab interface showing Original Data, Overrides, Active View, and References layers, illustrating how Lumina separates validated baselines from session-level modifications to maintain full data integrity throughout iterative Design of Experiments workflows.</span>
+    </div>
+  </div>
+
+  <!-- 3.1 Override List -->
+  <div class="subsection reveal" style="margin-top:44px;">
+    <h3 class="subsection-title">3.1 &nbsp;Override List</h3>
+    <p class="prose">
+      The Override List tab presents a transparent, time-stamped record of every parameter
+      modification introduced by the user during the session. Each entry displays the full
+      property path, the original value, the overridden value, the applied unit, and the
+      user-provided justification. This tracking mechanism is particularly significant for
+      iterative DoE workflows, where multiple parametric variations are explored in sequence.
+    </p>
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <img src="Override_List.png" alt="Override List tab"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Override List Screenshot</div><div class=\'up-hint\'>Add <strong>Override_List.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 7</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 7</span>
+        <span class="figure-caption-text">Override List &mdash; All session-level parameter modifications with full traceability, including original values, override values, units, and justification notes.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2 Active View -->
+  <div class="subsection reveal">
+    <h3 class="subsection-title">3.2 &nbsp;Active View</h3>
+    <p class="prose">
+      The Active View tab presents the merged, computation-ready dataset by combining the
+      original baseline parameters with all user-applied overrides. It provides a complete and
+      updated representation of the material state, including property paths, resolved values,
+      and units, ensuring that users always interact with the most current data during simulation
+      pre-processing. This unified view is critical for validating model behaviour, assessing
+      parameter sensitivity, and preparing simulation-ready XML exports for integration with
+      downstream solvers such as the coupled C++ material engine.
+    </p>
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <img src="Active_View.png" alt="Active View tab"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Active View Screenshot</div><div class=\'up-hint\'>Add <strong>Active_View.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 8</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 8</span>
+        <span class="figure-caption-text">Active View &mdash; Current working dataset combining baseline and overridden parameter values. Exportable as simulation-ready XML for integration with the computational engine.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 Reference Handling -->
+  <div class="subsection reveal">
+    <h3 class="subsection-title">3.3 &nbsp;Reference Handling</h3>
+    <p class="prose">
+      The References tab maintains full traceability by linking every stored parameter to its
+      respective experimental or literature source. Each reference entry is indexed against the
+      parameter it describes, enabling users and reviewers to audit the provenance of any value
+      displayed within the system. This feature is essential for scientific reproducibility &mdash;
+      particularly in defence and aerospace applications where material data validity must be
+      unambiguously documented. The reference layer is read-only and is not affected by any
+      override operations applied to the active dataset.
+    </p>
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <img src="Reference_Handling.png" alt="References tab"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Reference Handling Screenshot</div><div class=\'up-hint\'>Add <strong>Reference_Handling.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 3.3</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 3.3</span>
+        <span class="figure-caption-text">Reference Handling &mdash; The References tab, linking every material parameter to its validated experimental or literature source for full audit traceability.</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- § 4 OVERRIDE MANAGEMENT -->
+  <div class="section-head reveal">
+    <span class="section-num">§ 4</span>
+    <h2 class="section-title">Override Management Module</h2>
+  </div>
+  <p class="prose reveal">
+    The Override Management module, situated in the lower panel of the main window, provides
+    a structured form-based interface through which users may introduce temporary parameter
+    modifications to any stored material. The interface accepts four inputs per override operation:
+    the hierarchical property path (e.g.,
+    <code style="font-family:'JetBrains Mono',monospace;font-size:0.85em;background:#eef2fb;padding:1px 5px;border-radius:3px;">properties.Thermal.Cp</code>),
+    the new numerical value, the physical unit, and an optional justification string for audit purposes.
+  </p>
+  <p class="prose reveal" style="margin-top:12px;">
+    Quick Template buttons pre-populate the form for the most commonly modified properties &mdash;
+    <em>Thermal.Cp</em>, <em>Mechanical.Density</em>, and <em>ElastoPlastic.ShearModulus</em> &mdash; accelerating
+    iterative parametric studies. Applied overrides are immediately visible in the Override List tab
+    and are resolved into the Active View without any modification to the original database record,
+    ensuring all experimentation remains fully reversible and traceable.
+  </p>
+  <div class="figure-card reveal">
+    <div class="figure-img-wrap">
+      <img src="Override_Management.png" alt="Override Management form interface"
+        onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Override Management Screenshot</div><div class=\'up-hint\'>Add <strong>Override_Management.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 9</span></div>'"
+      />
+    </div>
+    <div class="figure-caption">
+      <span class="figure-caption-label">Fig. 9</span>
+      <span class="figure-caption-text">Override Management &mdash; Form-based interface for entering property path, value, unit, and justification. Quick Templates accelerate common parametric modifications without touching validated baseline records.</span>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- § 5 ADD NEW MATERIALS -->
+  <div class="section-head reveal">
+    <span class="section-num">§ 5</span>
+    <h2 class="section-title">Add New Materials</h2>
+  </div>
+  <p class="prose reveal">
+    The Add New Materials interface provides a guided workflow for ingesting new material entries
+    directly into the Lumina PostgreSQL database. Users specify chemical composition, material
+    class, thermophysical parameters, and source references through a validated form. The system
+    enforces schema consistency &mdash; including unit standardisation and XML-compatible parameter naming &mdash;
+    before committing any record, ensuring the corpus remains clean and simulation-ready as it grows.
+  </p>
+  <div class="figure-card reveal">
+    <div class="figure-img-wrap">
+      <img src="Add_New_Material.jpeg" alt="Add New Material interface"
+        onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Add New Material Screenshot</div><div class=\'up-hint\'>Add <strong>Add_New_Material.jpeg</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 5.1</span></div>'"
+      />
+    </div>
+    <div class="figure-caption">
+      <span class="figure-caption-label">Fig. 5.1</span>
+      <span class="figure-caption-text">Add New Material &mdash; Guided data-entry interface for ingesting new materials into the Lumina database with schema validation and unit standardisation.</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- § 6 VISUALIZATION -->
+<section class="viz-band" id="visualization">
+  <div class="viz-inner">
+
+    <div class="section-head reveal" style="border-color:rgba(37,99,235,0.15);">
+      <span class="section-num">§ 6</span>
+      <h2 class="section-title">Visualization</h2>
+    </div>
+    <p class="prose reveal">
+      The Lumina Unified Visualization suite consolidates four distinct analytical visualization
+      modules within a single tabbed interface &mdash; <strong>Material Property Comparisons</strong>,
+      <strong>EOS Visualization</strong>, <strong>Experimental Data Visualization</strong>, and
+      <strong>Experimental &amp; Theoretical Combined Analysis</strong>.
+      This unified approach enables domain experts to perform cross-material benchmarking,
+      equation-of-state curve analysis, and Hugoniot shock data interpretation without switching
+      application contexts, substantially accelerating design-of-experiments and model calibration workflows.
+    </p>
+
+    <!-- 6.1 Material Property Comparisons -->
+    <h3 class="viz-sub-heading reveal">
+      <span class="viz-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+      6.1 &nbsp;Material Property Comparisons
+    </h3>
+    <p class="prose reveal">
+      The Material Property Comparison module, accessible through the <em>Unified Viz</em> tab,
+      provides a flexible, multi-material cross-comparison environment for thermophysical parameters.
+      Users select any combination of materials from the searchable multi-selection panel (supporting
+      up to all 79 database entries simultaneously) and choose one or more properties to benchmark
+      &mdash; including thermal conductivity, melting temperature, specific heat, density, and mechanical
+      moduli. The module supports three chart types: a grouped <strong>Bar Chart</strong> for discrete
+      property comparisons, a <strong>Table</strong> view for precise numerical inspection, and a
+      <strong>Scatter Plot</strong> for correlation analysis across two selected properties.
+    </p>
+    <p class="prose reveal" style="margin-top:10px;">
+      Display options allow users to toggle between original database values and user-applied override
+      data, show or hide physical units, and include or suppress reference traceability links. The active
+      selection status (e.g., &ldquo;4 of 79 selected&rdquo;) is displayed in real time, and the resulting chart
+      updates dynamically upon any selection change.
+    </p>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img class="img-wide" src="Material_Property_Comparisons.png" alt="Material Property Comparisons interface"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Material Property Comparisons</div><div class=\'up-hint\'>Add <strong>Material_Property_Comparisons.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 6.1a</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 6.1a</span>
+        <span class="figure-caption-text">Material Property Comparison Interface &mdash; Users select from 79 materials and 15+ properties to generate bar charts, tables, or scatter plots with live display options including active data, overrides, units, and references.</span>
+      </div>
+    </div>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img src="Material_Property_Comparisons_plot.jpeg" alt="Material Property Comparison Bar Chart"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Property Comparison Plot</div><div class=\'up-hint\'>Add <strong>Material_Property_Comparisons_plot.jpeg</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 6.1b</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 6.1b</span>
+        <span class="figure-caption-text">Property Comparison Bar Chart &mdash; Melting Temperature comparison across Aluminum (933 K), HMX (~550 K), HNS (~589 K), and RDX (~477 K). Each material is colour-coded and generated dynamically from the active Lumina database state.</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         6.2 EOS VISUALIZATION (NEW CONTENT)
+    ══════════════════════════════════════ -->
+    <h3 class="viz-sub-heading reveal">
+      <span class="viz-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg></span>
+      6.2 &nbsp;EOS Visualization
+    </h3>
+    <p class="prose reveal">
+      The EOS Visualization module provides dedicated interactive interfaces for computing and
+      rendering thermodynamic relationships derived from calibrated Equation of State models stored
+      in the Lumina database. The module currently supports two widely deployed EOS formulations in
+      shock physics and energetic materials research: the <strong>Mie-Gr&uuml;neisen EOS</strong> for
+      metals under shock compression, and the <strong>Jones&ndash;Wilkins&ndash;Lee (JWL) EOS</strong>
+      for high explosive detonation product expansion. Each model has a dedicated sub-interface
+      that loads parameters automatically from the database, computes thermodynamic outputs in real time,
+      and renders publication-quality curves for benchmarking and model validation.
+    </p>
+
+    <!-- Mie-Grüneisen EOS block -->
+    <div class="eos-model-block reveal">
+      <div class="eos-model-header">
+        <h4>Mie-Gr&uuml;neisen Equation of State</h4>
+        <span class="eos-badge">Shock Compression &bull; Metals</span>
+      </div>
+      <div class="eos-model-body">
+        <p class="prose">
+          The Mie-Gr&uuml;neisen EOS module provides an interface for studying material behaviour under
+          shock compression by separating the cold (zero-Kelvin) and thermal contributions to pressure.
+          The interface allows users to select any metal from the database and automatically loads all
+          required parameters &mdash; including reference density, Gr&uuml;neisen coefficient (&Gamma;),
+          and internal energy &mdash; ensuring consistency with validated datasets for accurate thermodynamic analysis.
+          Computed thermodynamic outputs include pressure, volume, and internal energy, which together
+          form the basis for analysing shock-induced material behaviour across the relevant
+          pressure&ndash;volume regime.
+        </p>
+
+        <!-- image1: wide interface screenshot -->
+        <div class="figure-card" style="margin-top:20px;">
+          <div class="figure-img-wrap">
+            <img class="img-wide" src="Mie-Grüneisen EOS Interface.png" alt="Mie-Grüneisen EOS Interface"
+              onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Mie-Grüneisen EOS Interface</div><div class=\'up-hint\'>Place <strong>media/image1.png</strong> in the same folder.</div><span class=\'up-tag\'>Fig. 6.2a</span></div>'" />
+          </div>
+          <div class="figure-caption">
+            <span class="figure-caption-label">Fig. 6.2a</span>
+            <span class="figure-caption-text">Mie-Gr&uuml;neisen EOS interface for selecting materials and loading parameters from the database for shock compression analysis.</span>
+          </div>
+        </div>
+
+        <!-- image2 (narrow/vertical panel) + image3 (results) side by side -->
+        <div class="eos-fig-row" style="margin-top:20px;">
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:260px;">
+              <img class="img-vertical" src="Mie-Grüneisen EOS Parameters.png" alt="Mie-Grüneisen EOS Parameters"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:260px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Mie-Grüneisen EOS Parameters</div><div class=\'up-hint\'>media/image2.png</div><span class=\'up-tag\'>Fig. 6.2b</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.2b</span>
+              <span class="figure-caption-text">Parameter configuration for the Mie-Gr&uuml;neisen EOS, automatically retrieved from the database &mdash; including reference density, Gr&uuml;neisen coefficient, and internal energy.</span>
+            </div>
+          </div>
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:260px;">
+              <img src="Mie-Grüneisen EOS Computed Results.png" alt="Mie-Grüneisen EOS Computed Results"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:260px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Mie-Grüneisen EOS Results</div><div class=\'up-hint\'>media/image3.png</div><span class=\'up-tag\'>Fig. 6.2c</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.2c</span>
+              <span class="figure-caption-text">Computed thermodynamic results from the Mie-Gr&uuml;neisen EOS, including pressure, volume, and internal energy outputs for shock-induced material behaviour analysis.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- image4: P-V curve, full width -->
+        <div class="figure-card" style="margin-top:20px;">
+          <div class="figure-img-wrap">
+            <img class="img-wide" src="Mie-Grüneisen P-V Curve.png" alt="Mie-Grüneisen P-V Curve"
+              onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Mie-Grüneisen P-V Curve</div><div class=\'up-hint\'>media/image4.png</div><span class=\'up-tag\'>Fig. 6.2d</span></div>'" />
+          </div>
+          <div class="figure-caption">
+            <span class="figure-caption-label">Fig. 6.2d</span>
+            <span class="figure-caption-text">Pressure&ndash;volume (P&ndash;V) relationship from the Mie-Gr&uuml;neisen EOS, representing compressibility characteristics of the material under high-pressure conditions, essential for shock physics studies.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JWL EOS block -->
+    <div class="eos-model-block reveal">
+      <div class="eos-model-header">
+        <h4>Jones&ndash;Wilkins&ndash;Lee (JWL) Equation of State</h4>
+        <span class="eos-badge">High Explosives &bull; Detonation Products</span>
+      </div>
+      <div class="eos-model-body">
+        <p class="prose">
+          The Jones&ndash;Wilkins&ndash;Lee (JWL) EOS module provides a specialised interface for modelling the
+          expansion behaviour of high explosive detonation products. Users input detonation-related parameters
+          &mdash; constants A, B, R<sub>1</sub>, R<sub>2</sub>, and &omega;, alongside initial density and energy &mdash;
+          which control the pressure evolution of detonation products. These parameters are automatically
+          retrievable from the database for any stored energetic material, ensuring consistency with validated
+          charge characterisation data. Computed outputs include pressure, specific volume, and internal energy,
+          together with critical Chapman&ndash;Jouguet (CJ) point parameters: detonation velocity, particle
+          velocity, CJ pressure, CJ specific volume, and CJ internal energy. The resulting P&ndash;V curve
+          represents the expansion behaviour of detonation products and is widely used in explosive modelling
+          and validation studies.
+        </p>
+
+        <!-- image5: JWL wide interface screenshot -->
+        <div class="figure-card" style="margin-top:20px;">
+          <div class="figure-img-wrap">
+            <img class="img-wide" src="JWL EOS Interface.png" alt="JWL EOS Interface"
+              onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL EOS Interface</div><div class=\'up-hint\'>media/image5.png</div><span class=\'up-tag\'>Fig. 6.3a</span></div>'" />
+          </div>
+          <div class="figure-caption">
+            <span class="figure-caption-label">Fig. 6.3a</span>
+            <span class="figure-caption-text">Jones&ndash;Wilkins&ndash;Lee (JWL) EOS interface &mdash; tailored for modelling high explosive expansion behaviour with detonation-related parameter inputs and material selection.</span>
+          </div>
+        </div>
+
+        <!-- image6 + image7: two parameter panels side by side (equal size) -->
+        <div class="eos-fig-row" style="margin-top:20px;">
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:280px;">
+              <img class="img-vertical" src="JWL EOS Parameter Configuration A.png" alt="JWL EOS Parameter Configuration (Left)"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:280px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL Parameters (Left Panel)</div><div class=\'up-hint\'>media/image6.png</div><span class=\'up-tag\'>Fig. 6.3b</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.3b</span>
+              <span class="figure-caption-text">JWL EOS input configuration (left panel) &mdash; constants A, B, R<sub>1</sub>, R<sub>2</sub>, and &omega; along with initial density and energy governing the pressure evolution of detonation products.</span>
+            </div>
+          </div>
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:280px;">
+              <img class="img-vertical" src="JWL EOS Parameter Configuration B.png" alt="JWL EOS Parameter Configuration (Right)"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:280px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL Parameters (Right Panel)</div><div class=\'up-hint\'>media/image7.png</div><span class=\'up-tag\'>Fig. 6.3c</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.3c</span>
+              <span class="figure-caption-text">JWL EOS input configuration (right panel) &mdash; additional parameter inputs specifying detonation product properties for accurate pressure evolution modelling.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- image8: computed results, full width -->
+        <div class="figure-card" style="margin-top:20px;">
+          <div class="figure-img-wrap">
+            <img src="JWL EOS Computed Results.png" alt="JWL EOS Computed Results"
+              onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL EOS Computed Results</div><div class=\'up-hint\'>media/image8.png</div><span class=\'up-tag\'>Fig. 6.3d</span></div>'" />
+          </div>
+          <div class="figure-caption">
+            <span class="figure-caption-label">Fig. 6.3d</span>
+            <span class="figure-caption-text">Computed thermodynamic results from the JWL EOS &mdash; pressure, specific volume, internal energy, and Chapman&ndash;Jouguet point parameters including detonation velocity, particle velocity, CJ pressure, CJ specific volume, and CJ internal energy.</span>
+          </div>
+        </div>
+
+        <!-- image9 + image10: two P-V plots side by side, same size -->
+        <div class="eos-fig-row" style="margin-top:20px;">
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:220px;">
+              <img src="JWL EOS P-V Curve.png" alt="JWL EOS P-V Curve"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:220px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL EOS P-V Curve</div><div class=\'up-hint\'>media/image9.png</div><span class=\'up-tag\'>Fig. 6.3e</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.3e</span>
+              <span class="figure-caption-text">Pressure&ndash;volume (P&ndash;V) curve for the JWL EOS &mdash; representing expansion behaviour of detonation products, widely used in explosive modelling and validation studies.</span>
+            </div>
+          </div>
+          <div class="figure-card" style="margin:0;">
+            <div class="figure-img-wrap" style="min-height:220px;">
+              <img src="JWL EOS Additional Plots.png" alt="JWL EOS Additional Plots"
+                onerror="this.outerHTML='<div class=\'upload-placeholder\' style=\'min-height:220px;\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>JWL EOS Additional Plots</div><div class=\'up-hint\'>media/image10.png</div><span class=\'up-tag\'>Fig. 6.3f</span></div>'" />
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-label">Fig. 6.3f</span>
+              <span class="figure-caption-text">Additional JWL model plots showing energy relationships and pressure decay trends, providing deeper insight into the thermodynamic response of detonation products.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 6.3 Experimental Data Visualization -->
+    <h3 class="viz-sub-heading reveal">
+      <span class="viz-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/></svg></span>
+      6.3 &nbsp;Experimental Data Visualization
+    </h3>
+    <p class="prose reveal">
+      The Experimental Data Visualization module, accessible through the dedicated
+      <em>Experimental Data</em> tab, provides a specialised environment for loading, inspecting,
+      and plotting shock physics experimental records sourced from the Lumina database. The interface
+      is structured around five functional regions working in concert to deliver a fully interactive
+      Hugoniot analysis workflow. The database encompasses a broad range of material categories,
+      covering elements, alloys, compounds, synthetics, plastics, rocks and mixtures, and high explosives,
+      enabling comprehensive cross-category shock property comparison within a single unified environment.
+    </p>
+
+    <div class="info-box reveal">
+      <strong>Material Categories in Experimental Database:</strong>
+      <div class="category-chips" style="margin-top:10px;">
+        <span class="cat-chip">Elements</span>
+        <span class="cat-chip">Alloys</span>
+        <span class="cat-chip">Compounds</span>
+        <span class="cat-chip">Synthetics</span>
+        <span class="cat-chip">Plastics</span>
+        <span class="cat-chip">Rocks &amp; Mixtures</span>
+        <span class="cat-chip">High Explosives</span>
+      </div>
+    </div>
+
+    <div class="annotation-list reveal">
+      <div class="annotation-item">
+        <span class="annotation-num">1</span>
+        <div class="annotation-text"><strong>Experimental Data Tab</strong>The dedicated tab within the top navigation bar that activates the experimental data environment, distinct from the Material Browser and Unified Viz modules.</div>
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-num">2</span>
+        <div class="annotation-text"><strong>Material Selection</strong>A dropdown selector and &ldquo;Load Experimental Data&rdquo; button that retrieves all shock experiment records for the chosen material, displaying metadata including variant count and total data points.</div>
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-num">3</span>
+        <div class="annotation-text"><strong>Experimental Data Points</strong>A scrollable tabular display showing the raw shock experiment data &mdash; order index, initial density (&rho;&#8320;, g/cm&sup3;), shock velocity (Us, km/s), and particle velocity (Up, km/s) &mdash; for all dataset variants loaded.</div>
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-num">4</span>
+        <div class="annotation-text"><strong>Visualization Options</strong>A plot type selector offering five Hugoniot relationship plots: Us vs Up, P vs Up, P vs V/V&#8320;, V/V&#8320; vs Up, and &rho;&#8320; vs Up, along with &ldquo;Generate Plot&rdquo; and &ldquo;Save Plot as PNG/PDF&rdquo; controls.</div>
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-num">5</span>
+        <div class="annotation-text"><strong>Plotting Area</strong>An interactive Matplotlib canvas displaying colour-coded data points and linear fit lines per variant, with a full navigation toolbar for zoom, pan, axis adjustment, and direct image export.</div>
+      </div>
+    </div>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img class="img-wide" src="Experimental_Visualization_Features.png" alt="Experimental Data Visualization interface"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Experimental Visualization Features</div><div class=\'up-hint\'>Add <strong>Experimental_Visualization_Features.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 6.3a</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 6.3a</span>
+        <span class="figure-caption-text">Experimental Data Visualization Interface (ERBIUM) &mdash; Annotated view of the five functional regions: (1) Experimental Data tab, (2) Material selection panel, (3) Experimental data points table, (4) Visualization options with plot type selector, and (5) Interactive Matplotlib plotting area showing Us vs Up (Hugoniot) with multi-variant linear fits.</span>
+      </div>
+    </div>
+
+    <div class="info-box reveal">
+      <strong>Dataset Information Example &mdash; ERBIUM:</strong> Material: ERBIUM &middot; Variants (Datasets): 4 &middot; Total Points: 65.
+      Variant 1 (26 pts), Variant 2 &mdash; Cold-Pressed (16 pts), Variant 3 &mdash; Cold-Pressed (11 pts), Variant 4 &mdash; Cold-Pressed (12 pts).
+      Each variant represents an independently collected experimental campaign with distinct initial density conditions,
+      enabling rigorous inter-variant comparison within the Hugoniot framework.
+    </div>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img class="img-wide" src="Experimental_Datas.png" alt="Experimental data points table"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Experimental Data Points Table</div><div class=\'up-hint\'>Add <strong>Experimental_Datas.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 6.3b</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 6.3b</span>
+        <span class="figure-caption-text">Experimental data list as displayed in the Lumina GUI &mdash; showing the scrollable tabular record of shock physics measurements spanning material categories including Elements, Alloys, Compounds, Synthetics, Plastics, Rocks and Mixtures, and High Explosives, together with the interactive plot area for Hugoniot analysis.</span>
+      </div>
+    </div>
+
+    <!-- 6.4 Experimental & Theoretical -->
+    <h3 class="viz-sub-heading reveal">
+      <span class="viz-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg></span>
+      6.4 &nbsp;Experimental and Theoretical Data Visualization
+    </h3>
+    <p class="prose reveal">
+      Beyond experimental scatter data, Lumina supports the simultaneous overlay of theoretical
+      model predictions with empirical Hugoniot measurements, enabling direct visual validation
+      of constitutive and equation-of-state models against multi-source experimental evidence.
+      When a material&rsquo;s EOS model parameters are stored in the database alongside its experimental
+      shock data, the plotting engine can generate a combined figure that renders experimental
+      data points (per variant, colour-coded) alongside the analytically derived curve from the
+      calibrated model. This dual-layer representation is essential for model benchmarking &mdash; allowing
+      formulators and simulation engineers to immediately assess model fidelity across the full
+      pressure-velocity regime captured in the experimental corpus.
+    </p>
+    <p class="prose reveal" style="margin-top:10px;">
+      The theoretical curve is computed in real time from the stored model coefficients
+      (e.g., Hugoniot intercept C&#8320; and slope s for a linear Us&ndash;Up relationship), overlaid
+      on the experimental scatter, and annotated with the fit equation. Discrepancies between
+      model and data are immediately visible, guiding the iterative model calibration process
+      that the Override Management module is designed to support.
+    </p>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img src="Experimental_Theoritical_Both_Visual.png" alt="Combined experimental and theoretical Hugoniot visualization"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Experimental and Theoretical Visualization</div><div class=\'up-hint\'>Add <strong>Experimental_Theoritical_Both_Visual.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 6.4</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 6.4</span>
+        <span class="figure-caption-text">Combined Experimental and Theoretical Hugoniot Visualization &mdash; Experimental data points (colour-coded by variant) overlaid with the analytically computed EOS model curve, enabling direct visual validation of constitutive model fidelity against multi-source empirical shock data.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- § 7 EXPORT SYSTEM -->
+<section class="export-band" id="export">
+  <div class="export-inner">
+    <div class="section-head reveal" style="border-color:rgba(10,22,40,0.12);">
+      <span class="section-num">§ 7</span>
+      <h2 class="section-title">Advanced Export System</h2>
+    </div>
+    <p class="prose reveal">
+      The Lumina Advanced Export System provides a highly selective, user-controlled mechanism
+      for generating simulation-ready XML output files from the material database. Unlike a
+      bulk database dump, the export interface empowers users to define precisely which materials,
+      which thermophysical properties, and which constitutive model types are included in the
+      exported file &mdash; ensuring that downstream simulation solvers receive only the data they
+      require, formatted for direct ingestion without further pre-processing.
+    </p>
+    <p class="prose reveal" style="margin-top:10px;">
+      The export dialog is structured into four functional sections: a <strong>Materials</strong>
+      selection list, a <strong>Properties</strong> checklist, a <strong>Models</strong> selector,
+      and an <strong>Output File</strong> path browser. Each section operates independently,
+      allowing arbitrary combinations &mdash; for example, exporting only the EOS model and Density
+      for TNT, or extracting all properties for a curated set of metallic materials.
+    </p>
+
+    <div class="export-feature-grid reveal">
+      <div class="export-feature-item">
+        <div class="ef-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div><h5>Selective Material Export</h5><p>Choose any subset of the 79 database materials &mdash; including &ldquo;Select All&rdquo; / &ldquo;Deselect All&rdquo; shortcuts &mdash; for targeted multi-material XML bundles.</p></div>
+      </div>
+      <div class="export-feature-item">
+        <div class="ef-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18M3 6h18M3 14h12M3 18h8"/></svg></div>
+        <div><h5>Property-Level Granularity</h5><p>Individual properties (Density, Cp, thermal conductivity, etc.) are independently checkable, enabling simulation-specific data packages with minimal redundancy.</p></div>
+      </div>
+      <div class="export-feature-item">
+        <div class="ef-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+        <div><h5>Model Type Selection</h5><p>Constitutive models &mdash; ElasticModel, ElastoPlastic, ReactionModel, EOSModel &mdash; can be individually included or excluded from the XML output.</p></div>
+      </div>
+      <div class="export-feature-item">
+        <div class="ef-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        <div><h5>Flexible Output Path</h5><p>Users browse to any directory and specify a custom filename for the output XML, with an option to include full material metadata (Id, Name, Author, Date, Version).</p></div>
+      </div>
+    </div>
+
+    <p class="prose reveal" style="margin-top:8px;">
+      The export system also supports metadata inclusion &mdash; toggling whether material identifier,
+      author attribution, creation date, and version tags are embedded in the XML root element.
+      The exported XML strictly conforms to the Lumina hierarchical schema, ensuring compatibility
+      with the coupled C++ material engine and any other downstream parser configured for the Lumina format.
+    </p>
+
+    <div class="figure-card reveal">
+      <div class="figure-img-wrap">
+        <img class="img-sm" src="Export_System.png" alt="Export Materials to XML dialog"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>Export System Screenshot</div><div class=\'up-hint\'>Add <strong>Export_System.png</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 7.1</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 7.1</span>
+        <span class="figure-caption-text">Advanced Export System &mdash; The &ldquo;Export Materials to XML&rdquo; dialog showing selective material export (TNT highlighted), property checkboxes (Density, Cp selected), model type selection (EOSModel active), output file path browser, and metadata inclusion toggle.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- § 8 AI CHATBOT -->
+<section style="background:#f7f9ff; padding:72px 40px; border-top:1px solid var(--rule);" id="chatbot">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="section-head reveal" style="border-color:rgba(10,22,40,0.12);">
+      <span class="section-num">§ 8</span>
+      <h2 class="section-title">AI Chatbot Interface</h2>
+    </div>
+    <p class="prose reveal">
+      The AI Chatbot module enables natural language interaction with the entire Lumina material
+      database. Powered by a locally deployed Llama 2 model via the Ollama framework, the system
+      operates completely offline, ensuring data security in sensitive defence and aerospace
+      applications. Users type free-form queries &mdash; such as &ldquo;Show me the density of HMX&rdquo; or &ldquo;List all
+      materials with Cp above 400 J/kg&middot;K&rdquo; &mdash; and receive structured, human-readable responses derived
+      from optimised SQL executed against the PostgreSQL backend.
+    </p>
+    <div class="figure-card reveal" style="margin-top:32px;">
+      <div class="figure-img-wrap">
+        <img class="img-vertical" src="AI_Chatbot.jpeg" alt="AI Chatbot Interface"
+          onerror="this.outerHTML='<div class=\'upload-placeholder\'><div class=\'up-icon\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12\'/></svg></div><div class=\'up-title\'>AI Chatbot Interface Screenshot</div><div class=\'up-hint\'>Add <strong>AI_Chatbot.jpeg</strong> to the same folder.</div><span class=\'up-tag\'>Fig. 10</span></div>'"
+        />
+      </div>
+      <div class="figure-caption">
+        <span class="figure-caption-label">Fig. 10</span>
+        <span class="figure-caption-text">AI Chatbot Interface &mdash; Users query the material database in natural language. The locally deployed Llama 2 model translates intent into optimised SQL and returns structured, human-readable material data. No SQL expertise required.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- § 9 VIDEO DEMO -->
+<section class="video-section" id="demo">
+  <div class="video-inner">
+    <div class="section-head reveal" style="border-color:rgba(255,255,255,0.10);">
+      <span class="section-num" style="color:var(--gold);">§ 9</span>
+      <h2 class="section-title" style="color:#fff;">System Demonstration</h2>
+    </div>
+    <p class="video-desc reveal">
+      The following screen-capture demonstration presents the complete operational workflow of the
+      Lumina framework &mdash; from material selection and property inspection through parameter override
+      and Active View validation &mdash; illustrating how domain experts can interact with the system
+      without requiring SQL or programming expertise.
+    </p>
+    <div class="video-wrap reveal" id="videoWrapper">
+      <video id="demoVideo" controls preload="metadata" playsinline>
+        <source src="Video.mp4" type="video/mp4">
+        <source src="Video.mov" type="video/mp4">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span>Lumina &mdash; Material Informatics Framework</span>
+    <span>Department of Aerospace Engineering, IIT Madras</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    }),
+    { threshold: 0.07 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const vid
